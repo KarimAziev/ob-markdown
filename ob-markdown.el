@@ -73,7 +73,7 @@
       (insert string)
       (setq exit-code (apply #'call-process-region (append (list (point-min)
                                                                  (point-max))
-                                                           (list "pandoc" t t nil)
+                                                           (list org-babel-command:markdown t t nil)
                                                            args)))
       (cond ((zerop exit-code)
              (pcase output-type
