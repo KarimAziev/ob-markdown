@@ -54,7 +54,8 @@
         (replace-match "")))))
 
 ;; optionally declare default header arguments for this language
-(defvar org-babel-default-header-args:markdown '((:cmdline . "--top-level-division=part")))
+(defvar org-babel-default-header-args:markdown '((:cmdline . "--top-level-division=part")
+                                                 (:results . "raw")))
 (defvar org-babel-command:markdown "pandoc"
   "Command run by ob-markdown.")
 
