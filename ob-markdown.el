@@ -45,8 +45,8 @@
 (add-to-list 'org-babel-tangle-lang-exts '("markdown" . "text"))
 
 ;; optionally declare default header arguments for this language
-(defvar org-babel-default-header-args:markdown '((:cmdline . "-f gfm")
-                                                 (:results . "raw")))
+(defvar org-babel-default-header-args:markdown '((:results . "raw")
+                                                 (:cmdline . "--from gfm")))
 (defvar org-babel-command:markdown "pandoc"
   "Command run by ob-markdown.")
 
@@ -134,28 +134,37 @@ CMDLINE."
   "Execute a block of Markdown code with org-babel.  This function is
 called by `org-babel-execute-src-block'."
   (message "executing Markdown source code block")
-  (let* ((expanded-body (org-babel-expand-body:markdown body params))
-         (cmdline (cdr (assoc :cmdline params)))
-         (outtype-from-args (and cmdline
-                                 (ob-markdown-out-type-from-cmdline cmdline)))
-         (result-type (cdr (assq :result-params params))))
-    (cond ((and cmdline
-                (ob-markdown-get-arg-value cmdline "-f" "--from")))
-          (t
-           (setq cmdline (string-join (delq nil (list "-f" "gfm" cmdline)) " "))))
-    (cond (outtype-from-args)
-          ((member "html" result-type)
-           (setq cmdline (string-join (delq nil (list "-t" "html" cmdline)) " ")))
-          ((member "file" result-type)
-           nil)
-          (t
-           (setq cmdline (string-join (delq nil (list "-t" "org" cmdline)) " "))))
-    (ob-markdown-babel-eval (if cmdline
-                                (concat org-babel-command:markdown
-                                        " "
-                                        cmdline)
-                              org-babel-command:markdown)
-                            expanded-body)))
+  (if
+      (not (equal org-babel-command:markdown "pandoc"))
+      (org-babel-eval
+       (if-let ((cmdline (cdr (assoc :cmdline params))))
+           (concat org-babel-command:markdown " " cmdline)
+         org-babel-command:markdown)
+       (org-babel-expand-body:markdown body
+                                       params))
+    (let* ((expanded-body (org-babel-expand-body:markdown body params))
+           (cmdline (cdr (assoc :cmdline params)))
+           (outtype-from-args
+            (and cmdline
+                 (ob-markdown-out-type-from-cmdline cmdline)))
+           (result-type (cdr (assq :result-params params))))
+      (cond ((and cmdline
+                  (ob-markdown-get-arg-value cmdline "-f" "--from")))
+            (t
+             (setq cmdline (string-join (delq nil (list "-f" "gfm" cmdline)) " "))))
+      (cond (outtype-from-args)
+            ((member "html" result-type)
+             (setq cmdline (string-join (delq nil (list "-t" "html" cmdline)) " ")))
+            ((member "file" result-type)
+             nil)
+            (t
+             (setq cmdline (string-join (delq nil (list "-t" "org" cmdline)) " "))))
+      (ob-markdown-babel-eval (if cmdline
+                                  (concat org-babel-command:markdown
+                                          " "
+                                          cmdline)
+                                org-babel-command:markdown)
+                              expanded-body))))
 
 
 ;; This function should be used to assign any variables in params in
