@@ -1,0 +1,72 @@
+#+OPTIONS: ^:nil tags:nil num:nil
+
+* About
+
+Org-Babel functions for markdown evaluation.
+
+* Table of Contents                                       :TOC_2_gh:QUOTE:
+#+BEGIN_QUOTE
+- [[#about][About]]
+- [[#requirements][Requirements]]
+- [[#installation][Installation]]
+  - [[#with-use-package-and-straightel][With use-package and straight.el]]
+  - [[#manual-installation][Manual installation]]
+- [[#setup][Setup]]
+#+END_QUOTE
+
+* Requirements
+
+| Name   | Version |
+|--------+---------|
+| Emacs  |    24.4 |
+| pandoc | optional |
+
+
+* Installation
+
+** With use-package and straight.el
+#+begin_src elisp :eval no
+(use-package ob-markdown
+  :straight (:fork "KarimAziev/ob-markdown"
+             :type git
+             :flavor nil
+             :host github))
+#+end_src
+
+** Manual installation
+
+Download the source code and put it wherever you like, e.g. into =~/.emacs.d/ob-markdown/=
+
+#+begin_src shell :eval no
+git clone https://github.com/KarimAziev/ob-markdown.git ~/.emacs.d/ob-markdown/
+#+end_src
+
+Add the downloaded directory to the load path:
+
+#+begin_src elisp :eval no
+(add-to-list 'load-path "~/.emacs.d/ob-markdown/")
+(require 'ob-markdown)
+#+end_src
+
+* Setup
+
+The default command used to run the =pandoc= is defined in [[help:org-babel-command:typescript][org-babel-command:markdown]]. You can pass additional args from header argument =:cmdline=.
+
+#+begin_src emacs-lisp
+(setq org-babel-command:markdown "other-command")
+#+end_src
+
+Default arguments is defined in =org-babel-default-header-args:markdown=.
+
+#+begin_src elisp
+(setq org-babel-default-header-args:markdown '((:results . "raw") (:cmdline . "--from gfm")))
+#+end_src
+
+
+Load the markdown extension:
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((markdown . t)))
+#+END_SRC
