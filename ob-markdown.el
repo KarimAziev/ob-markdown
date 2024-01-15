@@ -1,14 +1,13 @@
-;;; ob-markdown.el --- org-babel functions for markdown evaluation -*- lexical-binding: t; -*-
+;;; ob-markdown.el --- Functions for markdown evaluation in org-mode -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2012 Takahiro Noda
 
 ;; Author: Takahiro Noda
 ;;         Karim Aziiev <karim.aziiev@gmail.com>
-;; Keywords: literate programming, reproducible research
-;; Homepage: https://gitbub.com/tnoda/ob-markdown/
+;; Keywords: outlines
 ;; Version: 0.01
 ;; URL: https://github.com/KarimAziev/ob-markdown
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "27.1"))
 
 ;;; License:
 
