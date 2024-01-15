@@ -86,7 +86,7 @@ after the Pandoc compilation process completes."
 
 ;; optionally declare default header arguments for this language
 (defvar org-babel-default-header-args:markdown '((:results . "raw")
-                                                 (:cmdline . "--from gfm")))
+                                                 (:cmdline . "--from gfm --wrap=none")))
 
 (defmacro ob-markdown-defvar (sym &rest body)
   "Define a namespaced variable with markdown suffix.
