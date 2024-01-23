@@ -65,7 +65,8 @@ source code that will be passed to Pandoc."
           (ob-markdown-add-used-langs)))
 
 (defcustom ob-markdown-pandoc-post-compile-hook '(ob-markdown-strip-custom-id-props
-                                                  ob-markdown-sync-block-languages-in-org)
+                                                  ob-markdown-sync-block-languages-in-org
+                                                  ob-markdown-fix-indent-block-languages-in-org)
   "Hooks to run after Pandoc compilation.
 
 Functions added to this hook are called with no arguments and can be used to
@@ -253,6 +254,63 @@ The order of the list matches the sequence of code blocks in the markdown BODY."
          ob-markdown-extracted-langs
          (equal "org" ob-markdown-out-type))
     (ob-markdown--sync-block-languages ob-markdown-extracted-langs)))
+
+(defun ob-markdown--s-shared-start (s1 s2)
+  "Find common prefix of two strings.
+
+Argument S1 is a string to compare.
+
+Argument S2 is another string to compare."
+  (declare (pure t)
+           (side-effect-free t))
+  (let ((search-length (min (length s1)
+                            (length s2)))
+        (i 0))
+    (while (and (< i search-length)
+                (= (aref s1 i)
+                   (aref s2 i)))
+      (setq i (1+ i)))
+    (substring s1 0 i)))
+
+(defun ob-markdown-fix-spaces ()
+  "Remove leading spaces before org block markers."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((case-fold-search t))
+      (while (re-search-forward "^\\([ 	]+\\)#\\+\\(begin\\|end\\)_" nil t 1)
+        (replace-match "" nil nil nil 1)))))
+
+(defun ob-markdown-fix-indent-block-languages-in-org ()
+  "Fix indentation of code blocks in Org files."
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward org-babel-src-block-regexp nil t 1)
+      (goto-char (match-beginning 0))
+      (let* ((beg-body (match-beginning 5))
+             (end-body (match-end 5))
+             (body (match-string 5)))
+        (let* ((lines
+                (split-string (substring-no-properties body) "[\n]"))
+               (strs (seq-remove 'string-empty-p lines))
+               (prefix (seq-reduce (lambda (acc it)
+                                     (ob-markdown--s-shared-start acc it))
+                                   strs
+                                   (pop strs)))
+               (rep (and prefix
+                         (> (length prefix) 0)
+                         (string-empty-p (string-trim prefix))
+                         (mapconcat
+                          (lambda (it)
+                            (if (string-prefix-p prefix it)
+                                (substring-no-properties it (length prefix))
+                              it))
+                          lines
+                          "\n"))))
+          (goto-char end-body)
+          (when rep
+            (delete-region beg-body end-body)
+            (insert rep)
+            (forward-line 1)))))))
 
 (defun ob-markdown--sync-block-languages (languages)
   "Ensure Org document code blocks reflect specified LANGUAGES.
