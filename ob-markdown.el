@@ -5,11 +5,12 @@
 ;; Author: Takahiro Noda
 ;;         Karim Aziiev <karim.aziiev@gmail.com>
 ;; Keywords: outlines
-;; Version: 0.01
+;; Version: 0.0.1
 ;; URL: https://github.com/KarimAziev/ob-markdown
 ;; Package-Requires: ((emacs "27.1"))
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
-;;; License:
+;; This file is NOT part of GNU Emacs.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,9 +23,7 @@
 ;; GNU General Public License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to the
-;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-;; Boston, MA 02110-1301, USA.
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -291,7 +290,7 @@ Argument S2 is another string to compare."
              (body (match-string 5)))
         (let* ((lines
                 (split-string (substring-no-properties body) "[\n]"))
-               (strs (seq-remove 'string-empty-p lines))
+               (strs (seq-remove #'string-empty-p lines))
                (prefix (seq-reduce (lambda (acc it)
                                      (ob-markdown--s-shared-start acc it))
                                    strs
