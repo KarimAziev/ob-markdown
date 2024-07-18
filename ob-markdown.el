@@ -198,9 +198,8 @@ Writes QUERY into a temp-buffer that is processed with
     (goto-char (point-min))
     (let ((case-fold-search t))
       (while (re-search-forward
-              ":PROPERTIES:[\n]+[\s\t]+:CUSTOM_ID:[\s\t][^\n]+[\n]+[\s\t]+:END:[\n]"
-              nil t
-              1)
+              ":PROPERTIES:[\n]+[\s\t]+:CUSTOM_ID:[\s\t][^\n]+[\n]+[\s\t]+\\(:[^E]+\\)*:END:[\n]"
+              nil t 1)
         (replace-match "")))))
 
 (defun ob-markdown-strip-custom-id-props ()
