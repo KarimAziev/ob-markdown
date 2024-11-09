@@ -350,7 +350,7 @@ Argument PARAMS is an association list of parameters for the code block."
   (if
       (not (equal org-babel-command:markdown "pandoc"))
       (org-babel-eval
-       (if-let ((cmdline (cdr (assoc :cmdline params))))
+       (if-let* ((cmdline (cdr (assoc :cmdline params))))
            (concat org-babel-command:markdown " " cmdline)
          org-babel-command:markdown)
        (org-babel-expand-body:markdown body
